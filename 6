@@ -1,0 +1,11 @@
+
+version: "3.9" # Use the appropriate version for your Docker and Docker Compose setup
+
+services:
+  my_apache_server:
+    image: site1
+    container_name: site-01
+    ports:
+      - "80:80" # Map host port 80 to container port 80
+    volumes:
+      - .:/usr/local/apache2/htdocs/ # Mount the current directory to the container's Apache web root

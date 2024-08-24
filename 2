@@ -1,0 +1,72 @@
+trigger:
+  branches:
+    include:
+      - main
+
+stages:
+  - stage: Build
+    displayName: "Build Stage"
+    pool:
+      name: DIGITAL SIGNAGE CONTENT CREATION
+
+    jobs:
+      - job: BuildJob
+        displayName: "Build Job"
+        steps:
+          - script: |
+              echo "Digital-Signage-Project"
+              sleep 0.5
+              echo "Build success"
+                        
+  - stage: dev
+    displayName: "Dev Stage"
+    dependsOn: Build
+    pool:
+      name: DIGITAL SIGNAGE CONTENT CREATION
+
+    jobs:
+      - job: DevJob
+        displayName: "Dev Job"
+        steps:
+          - script: |
+              sudo cp -R /home/ubuntu/myagent/_work/1/s/* /var/www/html/screen1
+            displayName: "Copy to screen1 directory"
+
+  - stage: PREPROD
+    displayName: "PREPROD"
+    dependsOn: dev
+    pool:
+      name: DIGITAL SIGNAGE CONTENT CREATION
+
+      environment: Prepod
+    jobs:
+      - deployment: DeployToPreprod
+        displayName: "Deploy to PREPROD"
+        environment: Prepod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    sudo cp -R /home/ubuntu/myagent/_work/1/s/* /var/www/html/screen2
+                  displayName: "Copy to screen2 directory"
+
+  - stage: PROD
+    displayName: "PROD Release"
+    dependsOn: PREPROD
+    pool:
+      name: DIGITAL SIGNAGE CONTENT CREATION
+
+      environment: prod
+    jobs:
+      - deployment: DeployToProd
+        displayName: "Deploy to PROD"
+        environment: prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    sudo cp -R /home/ubuntu/myagent/_work/1/s/* /var/www/html/screen3
+                    echo "Build success"
+                  displayName: "Copy to screen3 directory"

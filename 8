@@ -1,0 +1,20 @@
+
+<VirtualHost *:80>
+
+    ServerAdmin admin@proxy.com
+    ServerName proxy.opsdemo.xyz
+    ServerAlias www.proxy.opsdemo.xyz
+
+ ProxyPreserveHost On
+        ProxyPass / http://127.0.0.1:3003/
+        ProxyPassReverse / http://127.0.0.1:3003/
+
+    DocumentRoot /var/www/html/demo-application/*
+
+    ErrorLog ${APACHE_LOG_DIR}/prod.error.log
+    CustomLog ${APACHE_LOG_DIR}/prod.access.log combined
+
+</VirtualHost>
+
+
+reverse proxy 

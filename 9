@@ -1,0 +1,87 @@
+variables:
+  - group: task-3 Variable group
+
+trigger:
+  branches:
+    include:
+      - main
+
+stages:
+  - stage: Build
+    displayName: "Build Stage"
+    pool:
+      name: demo-3
+    jobs:
+      - job: BuildJob
+        displayName: "Build Job"
+        steps:
+          - script: |
+              echo "Hello world"
+              sleep 0.5
+              echo "Build success"
+              
+              sudo docker build -t site:latest .
+
+  - stage: dev
+    displayName: "Dev Stage"
+    dependsOn: Build
+    pool:
+      name: demo-3
+    jobs:
+      - job: DevJob
+        displayName: "Dev Job"
+        steps:
+          - script: |
+              
+              sudo docker kill application1
+              sudo docker rm application1
+              sudo docker run --name application1 -d -p 8000:80 site:latest
+
+            displayName: "run dockerfile"
+
+  - stage: PREPROD
+    displayName: "PREPROD"
+    dependsOn: dev
+    pool:
+      name: demo-3
+      environment: Prepod
+    jobs:
+      - deployment: DeployToPreprod
+        displayName: "Deploy to PREPROD"
+        environment: Prepod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    
+                    sudo docker kill application2
+                    sudo docker rm application2
+                    sudo docker run --name application2 -d -p 8001:80 site:latest
+
+                  displayName: "run dockerfile"
+
+  - stage: PROD
+    displayName: "PROD Release"
+    dependsOn: PREPROD
+    pool:
+      name: demo-3
+      environment: prod
+    jobs:
+      - deployment: DeployToProd
+        displayName: "Deploy to PROD"
+        environment: prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: |
+                    
+                    sudo docker kill application3
+                    sudo docker rm application3
+                    sudo docker run --name application3 -d -p 8002:80 site:latest
+                    
+                    
+                    echo "Build success"
+                  displayName: "run dockerfile"
+

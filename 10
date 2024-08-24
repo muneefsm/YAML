@@ -1,0 +1,18 @@
+<VirtualHost *:80>
+
+    ServerAdmin admin@screen.com
+    ServerName screen.opsdemo.xyz
+    ServerAlias www.screen.opsdemo.xyz
+
+    DocumentRoot /var/www/html/screen1
+
+    <Directory /var/www/html/screen1>
+        Options -Indexes +FollowSymLinks +MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/crm.error.log
+    CustomLog ${APACHE_LOG_DIR}/crm.access.log combined
+</VirtualHost>
+

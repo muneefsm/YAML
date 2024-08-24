@@ -1,0 +1,29 @@
+version: vi
+
+services:
+  site1:
+    container_name: site1
+    image: site:latest
+    ports:
+      - "8000:80"
+
+
+version: vi
+
+services:
+  site1:
+    container_name: site2
+    image: site:latest
+    ports:
+      - "8001:80"
+
+    
+version: vi
+
+services:
+  site1:
+    container_name: site3
+    image: site:latest
+    ports:
+      - "8002:80"
+    
